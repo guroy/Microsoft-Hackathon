@@ -37,7 +37,7 @@ public class dragShip : MonoBehaviour {
 		if (castedPlane.Raycast(cursorRay, out rayDist))
 		{
 			Vector3 cursorPosition = (cursorRay.GetPoint(rayDist));
-			transform.position = cursorPosition;
+			transform.position = Vector3.Lerp(transform.position, cursorPosition, Time.deltaTime*0.9f);
 		}
 
 

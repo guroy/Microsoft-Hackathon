@@ -120,7 +120,7 @@ public class PlayerSteering : MonoBehaviour
 
         //get the distance between the two gameobject, take account of the hitbox
         float distance = vecToC.magnitude;
-		Debug.Log ("distance: "+distance);
+//		Debug.Log ("distance: "+distance);
         if (Math.Abs(distance) < 0.5)
         {
             velocity = Vector3.zero;
