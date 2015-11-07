@@ -14,7 +14,7 @@ public class bullet : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Vector3.Distance (startPos, this.transform.position) > range)
+		if (Mathf.Abs(Vector3.Distance (startPos, this.transform.position)) > range)
 			Destroy (this.gameObject);
 	}
 
