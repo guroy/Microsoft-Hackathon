@@ -22,6 +22,8 @@ public class weapon : MonoBehaviour {
 			GameObject projectileA = Instantiate (projectile, spawnpoint.position, spawnpoint.rotation) as GameObject;
 			projectileA.GetComponent<bullet>().damage = dmgValue;
 			projectileA.GetComponent<bullet>().creator = this.transform;
+			projectileA.tag = this.transform.parent.gameObject.tag;
+			projectileA.GetComponent<bullet>().range =range;
 			projectileA.GetComponent<Rigidbody> ().velocity = spawnpoint.TransformDirection (new Vector3 (0, 25, 0));
 		}		 
 	}
