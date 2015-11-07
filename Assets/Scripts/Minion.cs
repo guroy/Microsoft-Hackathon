@@ -91,13 +91,13 @@ public class Minion : MonoBehaviour
     // Other Methods
     //----------------------------------------------------------------------
 
-    protected Vector3 separate(List<Minion> minions)
+    public void separate(List<GameObject> minions)
     {
         Vector3 steer = Vector3.zero;
-        float desiredSeparation = radius * transform.lossyScale.magnitude * 2;
+        float desiredSeparation = radius * transform.lossyScale.magnitude * 4;
         Vector3 sum = new Vector3();
         int count = 0;
-        foreach (Minion min in minions)
+        foreach (GameObject min in minions)
         {
             float d = Vector3.Distance(transform.position, min.transform.position);
             if ((d > 0) && (d < desiredSeparation))
@@ -114,7 +114,10 @@ public class Minion : MonoBehaviour
             sum = sum.normalized * maxSpeed;
             steer = sum - velocity;
         }
-        return steer;
+
+        steer *= weightAvoid;
+        steer = Vector3.ClampMagnitude(steer, maxForce);
+        ApplyForce(steer);
     }
 
     /// <summary>
@@ -127,21 +130,17 @@ public class Minion : MonoBehaviour
         //Calculate the force to avoid obstacles
         Vector3 avoidance = avoidObstacle();
         //calculate the separation force
-        //Vector3 separation = separate();
 
         //weight the different forces to Apply to the acceleration
         desired *= weightSteer;
         avoidance *= weightAvoid;
-        //separation *= weightAvoid;
 
         //limit the force to apply
         desired = Vector3.ClampMagnitude(desired, maxForce);
         avoidance = Vector3.ClampMagnitude(avoidance, maxForce);
-        //separation = Vector3.ClampMagnitude(separation, maxForce);
 
         ApplyForce(desired);
         ApplyForce(avoidance);
-        //ApplyForce(separation);
     }
 
 
@@ -264,94 +263,4 @@ public class Minion : MonoBehaviour
 
         return steer;
     }
-
-    //protected void scanObstacles()
-    //{
-    //    //clear the previous list of obstacles
-    //    Obstacles.Clear();
-    //    foreach (GameObject o in FindObjectsOfType(typeof(GameObject)) as GameObject[])
-    //    {
-    //        if (o.tag != "Manager" && o.tag != "MainCamera" && o.tag != "part")
-    //        {
-
-    //            Debug.Log(o.tag);
-    //            //check if the object o is ibn the active hierarchy
-    //            //get the distance with the object
-    //            Vector3 vecToC = o.transform.position - transform.position;
-    //            //check if the obecjt is in the dangerous object
-    //            if ((vecToC.magnitude > (radius * transform.lossyScale.magnitude)) && (vecToC.magnitude < safeDist))
-    //            {
-
-    //                //add the object to the obstacles list
-    //                Obstacles.Add(o);
-    //                Debug.Log(o.name);
-    //            }
-    //        }
-    //    }
-    //}
-    /// <summary>
-    /// Calculate the final steering force 
-    /// </summary>
-    /// <param name="obstacles"></param>
-    /// <returns></returns>
-    //protected Vector3 avoidAllObstacles(List<GameObject> obstacles)
-    //{
-    //    Vector3 steer = Vector3.zero;
-
-    //    foreach (GameObject o in obstacles)
-    //    {
-    //        Vector3 buf = avoidObstacle(o);
-    //        steer += Vector3.Lerp(steer, buf, 1f);
-    //    }
-    //    steer = Vector3.ClampMagnitude(steer, maxForce);
-    //    return steer;
-    //}
-
-
-    //private Vector3 avoidObstacle(GameObject obst)
-    //{
-    //    Vector3 steer = Vector3.zero;
-    //    //Calculate the vector between the current minion and obst
-    //    Vector3 vecToC = transform.position - obst.transform.position;
-    //    //Find the distance between the minion and obst
-    //    float distance = vecToC.magnitude;
-    //    float radiusObst = obst.GetComponent<SphereCollider>().radius * obst.GetComponent<Transform>().lossyScale.magnitude;
-    //    distance = distance - ((radius * transform.lossyScale.magnitude) + radiusObst);
-    //    //If obst is in the safe distance of the minion, he try to avoid by adding a force
-    //    if (distance < safeDist)
-    //    {
-    //        //Test if obst is behind
-    //        if (Vector3.Dot(vecToC, transform.forward) < 0)
-    //        {
-    //            // So far the obstacle is in front of the minion and dangerous
-    //            //We know want to know if obst is on the right or on the left
-    //            float distToC = Vector3.Dot(transform.right, vecToC);
-    //            if ((radius + radiusObst) - Math.Abs(distToC) > 0)
-    //            {
-    //                //This far mean that obst will lead to a collision
-    //                //we now need to know if we should go left or right
-    //                Vector3 desVel = Vector3.zero;
-    //                //Test if we should go right
-    //                if (distToC < 0)
-    //                {
-    //                    desVel = transform.right * -radiusObst;
-    //                }
-    //                else // else we should go left
-    //                {
-    //                    desVel = transform.right * radiusObst;
-    //                }
-
-    //                steer = (desVel - velocity) * (distance);
-    //                steer = Vector3.ClampMagnitude(steer, maxForce);
-    //            }
-    //        }
-    //    }
-    //    return steer;
-    //}
-
-    //}
-
-
-
-
 }
