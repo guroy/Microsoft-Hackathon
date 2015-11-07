@@ -5,8 +5,6 @@ using System;
 //use the Generic system here to make use of a Flocker list later on
 using System.Collections.Generic;
 
-[RequireComponent(typeof(CharacterController))]
-
 public class Minion : MonoBehaviour
 {
     //----------------------------------------------------------------------
@@ -43,6 +41,11 @@ public class Minion : MonoBehaviour
         get { return velocity; }
     }
 
+    public Minion(GameObject target)
+    {
+        seekerTarget = target;
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -63,6 +66,7 @@ public class Minion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        scanObstacles();
         CalcSteeringForces();
         velocity = Vector3.ClampMagnitude((velocity + acceleration), maxSpeed);
 
@@ -101,7 +105,7 @@ public class Minion : MonoBehaviour
         }
 
         //Make the AI go forward
-        transform.Translate(transform.forward * velocity.magnitude * Time.deltaTime);
+        transform.Translate(Vector3.forward * velocity.magnitude * Time.deltaTime);
         //reset acceleration
         acceleration = Vector3.zero;
 
@@ -111,7 +115,31 @@ public class Minion : MonoBehaviour
     // Other Methods
     //----------------------------------------------------------------------
 
-
+    protected void separate(List<Minion> minions)
+    {
+        float desiredSeparation = radius *transform.lossyScale.magnitude  * 2;
+        Vector3 sum = new Vector3();
+        int count = 0;
+        foreach(Minion min in minions)
+        {
+            float d = Vector3.Distance(transform.position, min.transform.position);
+            if((d > 0) && (d <desiredSeparation))
+            {
+                Vector3 diff = transform.position - min.transform.position;
+                diff = diff.normalized / d;
+                sum += diff;
+                count++;
+            }
+        }
+        if(count > 0)
+        {
+            sum /= count;
+            sum = sum.normalized * maxSpeed;
+            Vector3 steer = sum - velocity;
+            Vector3.ClampMagnitude(steer, weightAvoid);
+            ApplyForce(steer);
+        }
+    }
 
     /// <summary>
     /// Calculate the steering force for the group of dude
@@ -137,25 +165,24 @@ public class Minion : MonoBehaviour
     {
         //clear the previous list of obstacles
         Obstacles.Clear();
-        // get all the gameobject of the scene
-        GameObject[] allObjects = UnityEngine.GameObject.FindObjectsOfType<GameObject>();
-
-        Debug.Log(allObjects.Length);
-        foreach(GameObject o in allObjects)
+        foreach (GameObject o in FindObjectsOfType(typeof(GameObject)) as GameObject[])
         {
-            //check if the object o is ibn the active hierarchy
-           // if(o.activeInHierarchy)
-           // {
+            if (o.tag != "Manager" && o.tag != "MainCamera" && o.tag!= "part")
+            {
+
+                Debug.Log(o.tag);
+                //check if the object o is ibn the active hierarchy
                 //get the distance with the object
                 Vector3 vecToC = o.transform.position - transform.position;
                 //check if the obecjt is in the dangerous object
-                if( vecToC.magnitude < safeDist )
+                if ((vecToC.magnitude > (radius * transform.lossyScale.magnitude)) && (vecToC.magnitude < safeDist))
                 {
+
                     //add the object to the obstacles list
                     Obstacles.Add(o);
-                    Debug.Log("Object added");
+                    Debug.Log(o.name);
                 }
-           // }
+            }
         }
     }
 
@@ -217,7 +244,8 @@ public class Minion : MonoBehaviour
 
         foreach (GameObject o in obstacles)
         {
-            steer += avoidObstacle(o);
+            Vector3 buf = avoidObstacle(o);
+          steer += Vector3.Lerp(steer, buf,1f);
         }
         steer = Vector3.ClampMagnitude(steer, maxForce);
         return steer;
@@ -260,7 +288,7 @@ public class Minion : MonoBehaviour
                         desVel = transform.right * radiusObst;
                     }
 
-                    steer = (desVel - velocity);
+                    steer = (desVel - velocity) * (distance);
                     steer = Vector3.ClampMagnitude(steer, maxForce);
                 }
             }
