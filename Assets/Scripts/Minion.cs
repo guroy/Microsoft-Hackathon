@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterController))]
 
-public class Minion : MonoBehaviour 
+public class Minion : MonoBehaviour
 {
     //----------------------------------------------------------------------
     // Class Field
@@ -18,6 +18,7 @@ public class Minion : MonoBehaviour
     protected Vector3 desired;
     public float mass;
     public float rotationSpeed;
+    protected bool fire;
 
     //Forces
     public float weightSteer;
@@ -29,11 +30,11 @@ public class Minion : MonoBehaviour
     public float fireRange;
     public float safeDist;
     public float radius;
-    public List<GameObject> Obstacles;
+    private List<GameObject> Obstacles;
 
     //access to character Controller component
     //CharacterController charController;
-    
+
     //Target
     public GameObject seekerTarget;
 
@@ -42,30 +43,69 @@ public class Minion : MonoBehaviour
         get { return velocity; }
     }
 
-	// Use this for initialization
-	void Start () 
+    // Use this for initialization
+    void Start()
     {
         //charController = GetComponent<CharacterController>();
-       
+
         //Movement
         acceleration = Vector3.zero;
         velocity = transform.forward;
         desired = Vector3.zero;
-	}
-	
-	// Update is called once per frame
-	void Update () 
+
+        //Fight
+        fire = false;
+
+        //Collision
+        Obstacles = new List<GameObject>();
+    }
+
+    // Update is called once per frame
+    void Update()
     {
         CalcSteeringForces();
         velocity = Vector3.ClampMagnitude((velocity + acceleration), maxSpeed);
+
+        //-------------------------------------------------------------
+        // FANCY ROLL STUFF NEED TO BE DONE LATER
+        //-------------------------------------------------------------
+        //float angle = Vector3.Angle(transform.forward, velocity);
+        //Debug.Log(angle);
+        //float roll = 0;
+        //if(angle < 0)
+        //{
+        //    roll = -15;
+        //    transform.Rotate(0, 0,roll);
+        //}
+        //else if(angle > 0)
+        //{
+
+        //    roll = 15;
+        //    transform.Rotate(0,0, roll);
+        //}
+        //else
+        //{
+        //    transform.Rotate(0,0,-transform.rotation.z);
+        //}
+
+
         //Smooth rotation
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(velocity), rotationSpeed * Time.deltaTime);
+        transform.Rotate(transform.rotation.x, transform.rotation.y, transform.rotation.z);
         transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-        transform.Translate(transform.forward * velocity.magnitude * Time.deltaTime);
 
+        //Check if the target is in the fire range
+        if (isArrived(seekerTarget))
+        {
+            //FIRE UP 
+        }
+
+        //Make the AI go forward
+        transform.Translate(transform.forward * velocity.magnitude * Time.deltaTime);
+        //reset acceleration
         acceleration = Vector3.zero;
-        
-	}
+
+    }
 
     //----------------------------------------------------------------------
     // Other Methods
@@ -91,6 +131,55 @@ public class Minion : MonoBehaviour
 
         ApplyForce(desired);
         ApplyForce(avoidance);
+    }
+
+    protected void scanObstacles()
+    {
+        //clear the previous list of obstacles
+        Obstacles.Clear();
+        // get all the gameobject of the scene
+        GameObject[] allObjects = UnityEngine.GameObject.FindObjectsOfType<GameObject>();
+
+        Debug.Log(allObjects.Length);
+        foreach(GameObject o in allObjects)
+        {
+            //check if the object o is ibn the active hierarchy
+           // if(o.activeInHierarchy)
+           // {
+                //get the distance with the object
+                Vector3 vecToC = o.transform.position - transform.position;
+                //check if the obecjt is in the dangerous object
+                if( vecToC.magnitude < safeDist )
+                {
+                    //add the object to the obstacles list
+                    Obstacles.Add(o);
+                    Debug.Log("Object added");
+                }
+           // }
+        }
+    }
+
+    /// <summary>
+    /// Fire on the target if it's in the fire range and oriented the ship to the target
+    /// </summary>
+    /// <param name="target"> the target aim by the AI</param>
+    /// <returns>return true if the the target is in the fire range, else return false</returns>
+    protected bool isArrived(GameObject target)
+    {
+        bool res = false;
+        Vector3 vecToC = target.transform.position - transform.position;
+        //get the distance between the two gameobject, take account of the hitbox
+        float distance = vecToC.magnitude - (radius * transform.lossyScale.magnitude) - (target.GetComponent<SphereCollider>().radius * transform.lossyScale.magnitude);
+        if (distance <= fireRange)
+        {
+            velocity = Vector3.zero;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(vecToC), rotationSpeed * Time.deltaTime);
+            res = true;
+        }
+
+        //if ze arrived ze need to shoot
+        fire = res;
+        return res;
     }
 
     /// <summary>
@@ -126,7 +215,7 @@ public class Minion : MonoBehaviour
     {
         Vector3 steer = Vector3.zero;
 
-        foreach(GameObject o in obstacles)
+        foreach (GameObject o in obstacles)
         {
             steer += avoidObstacle(o);
         }
@@ -146,7 +235,7 @@ public class Minion : MonoBehaviour
         //Find the distance between the minion and obst
         float distance = vecToC.magnitude;
         float radiusObst = obst.GetComponent<SphereCollider>().radius * obst.GetComponent<Transform>().lossyScale.magnitude;
-        distance  = distance - ((radius * transform.lossyScale.magnitude) + radiusObst);
+        distance = distance - ((radius * transform.lossyScale.magnitude) + radiusObst);
         //If obst is in the safe distance of the minion, he try to avoid by adding a force
         if (distance < safeDist)
         {
