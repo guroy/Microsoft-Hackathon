@@ -16,19 +16,19 @@ public class Minion : MonoBehaviour
     protected Vector3 desired;
     public float mass;
     public float rotationSpeed;
-    protected bool fire;
 
     //Forces
-    public float weightSteer;
-    public float weightAvoid;
-    public float maxSpeed;
-    public float maxForce;
+    public int weightSteer;
+    public int weightAvoid;
+    public int maxSpeed;
+    public int maxForce;
 
     //Collision
-    public float fireRange;
-    public float safeDist;
+    public int fireRange;
+    public int safeDist;
     public float radius;
     private List<GameObject> Obstacles;
+    private float timer;
 
     //access to character Controller component
     //CharacterController charController;
@@ -55,9 +55,18 @@ public class Minion : MonoBehaviour
         acceleration = Vector3.zero;
         velocity = transform.forward;
         desired = Vector3.zero;
+        mass = 2;
+        rotationSpeed = 6;
+        weightSteer = 1;
+        weightAvoid = 20;
+        maxSpeed = 10;
+        maxForce = 10;
+        fireRange = 15;
+        safeDist = 15;
+        radius = 0.5f;
+        timer = 0;
 
         //Fight
-        fire = false;
 
         //Collision
         Obstacles = new List<GameObject>();
@@ -78,7 +87,13 @@ public class Minion : MonoBehaviour
         //Check if the target is in the fire range
         if (isArrived(seekerTarget))
         {
-            //FIRE UP 
+            //FIRE UP
+
+            GetComponentInChildren<weaponMinion>().fire = true;
+        }
+        else
+        {
+            GetComponentInChildren<weaponMinion>().fire = false;
         }
 
         //Make the AI go forward
@@ -94,7 +109,7 @@ public class Minion : MonoBehaviour
     public void separate(List<GameObject> minions)
     {
         Vector3 steer = Vector3.zero;
-        float desiredSeparation = radius * transform.lossyScale.magnitude * 4;
+        float desiredSeparation = radius * transform.lossyScale.magnitude * 6;
         Vector3 sum = new Vector3();
         int count = 0;
         foreach (GameObject min in minions)
@@ -114,7 +129,6 @@ public class Minion : MonoBehaviour
             sum = sum.normalized * maxSpeed;
             steer = sum - velocity;
         }
-
         steer *= weightAvoid;
         steer = Vector3.ClampMagnitude(steer, maxForce);
         ApplyForce(steer);
@@ -128,19 +142,30 @@ public class Minion : MonoBehaviour
         Vector3 desSteerForce = seek(seekerTarget.transform.position);
         desired += desSteerForce;
         //Calculate the force to avoid obstacles
-        Vector3 avoidance = avoidObstacle();
+
         //calculate the separation force
 
         //weight the different forces to Apply to the acceleration
         desired *= weightSteer;
-        avoidance *= weightAvoid;
+
 
         //limit the force to apply
         desired = Vector3.ClampMagnitude(desired, maxForce);
-        avoidance = Vector3.ClampMagnitude(avoidance, maxForce);
+       
 
         ApplyForce(desired);
-        ApplyForce(avoidance);
+        if (timer >= 0.1f)
+        {
+            Vector3 avoidance = avoidObstacle();
+            avoidance *= weightAvoid * 10;
+            //avoidance = Vector3.ClampMagnitude(avoidance, maxForce);
+            ApplyForce(avoidance);
+            timer = 0;
+        }
+        else
+        {
+            timer += Time.deltaTime;
+        }
     }
 
 
@@ -159,12 +184,10 @@ public class Minion : MonoBehaviour
         if (distance <= fireRange)
         {
             velocity = Vector3.zero;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(vecToC), rotationSpeed * Time.deltaTime);
+            //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(vecToC), rotationSpeed * Time.deltaTime);
+            transform.forward = vecToC.normalized;
             res = true;
         }
-
-        //if ze arrived ze need to shoot
-        fire = res;
         return res;
     }
 
@@ -214,14 +237,12 @@ public class Minion : MonoBehaviour
         if (Physics.Raycast(leftRay, out leftHit, safeDist*2))
         {
             leftDist = leftHit.distance;
-            Debug.Log("left distance " + leftDist);
             left = true;
 
         }
         if (Physics.Raycast(rightRay, out rightHit, safeDist*2))
         {
             rightDist = rightHit.distance;
-            Debug.Log("right distance " + rightDist);
             right = true;
         }
 
@@ -258,7 +279,6 @@ public class Minion : MonoBehaviour
             distance = 1;
         }
         steer = desVel * 2;
-        Debug.Log(distance);
         steer = Vector3.ClampMagnitude(steer, maxForce);
 
         return steer;
