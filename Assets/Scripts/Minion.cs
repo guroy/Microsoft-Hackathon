@@ -35,6 +35,9 @@ public class Minion : MonoBehaviour
 
     //Target
     public GameObject seekerTarget;
+    public GameObject priorTarget;
+    public GameObject player;
+    public GameObject enemyMinion;
 
     public Vector3 Velocity
     {
