@@ -31,7 +31,16 @@ public class weaponMinion : MonoBehaviour {
 			GameObject projectileA = Instantiate (projectile, transform.position + transform.up * 4 , transform.rotation) as GameObject;
 			projectileA.GetComponent<bullet>().damage = dmgValue;
 			projectileA.GetComponent<bullet>().creator = this.transform;
-			projectileA.tag = this.transform.parent.gameObject.tag;
+            string tag;
+            if(this.transform.parent.gameObject.tag == "RedTeam")
+            {
+                tag = "RedLaser";
+            }
+            else
+            {
+                tag = "BlueLaser";
+            }
+            projectileA.tag = tag;
 			projectileA.GetComponent<bullet>().range =range;
 			projectileA.GetComponent<Rigidbody> ().velocity = transform.TransformDirection (new Vector3 (0, 25, 0));
             timer = 0;

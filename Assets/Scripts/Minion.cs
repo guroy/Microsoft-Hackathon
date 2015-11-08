@@ -27,7 +27,6 @@ public class Minion : MonoBehaviour
     public int fireRange;
     public int safeDist;
     public float radius;
-    private List<GameObject> Obstacles;
     private float timer;
 
     //access to character Controller component
@@ -36,8 +35,7 @@ public class Minion : MonoBehaviour
     //Target
     public GameObject seekerTarget;
     public GameObject priorTarget;
-    public GameObject player;
-    public GameObject enemyMinion;
+    private bool target;
 
     public Vector3 Velocity
     {
@@ -70,14 +68,14 @@ public class Minion : MonoBehaviour
         timer = 0;
 
         //Fight
-
-        //Collision
-        Obstacles = new List<GameObject>();
+        target = false;
+        seekerTarget = priorTarget;
     }
 
     // Update is called once per frame
     void Update()
     {
+        findTarget();
        // scanObstacles();
         CalcSteeringForces();
         velocity = Vector3.ClampMagnitude((velocity + acceleration), maxSpeed);
@@ -216,6 +214,60 @@ public class Minion : MonoBehaviour
         desired.y = 0;
 
         return desired;
+    }
+
+    private void findTarget()
+    {
+        target = false;
+        string tagPlayer;
+        string tagMinion;
+        if(gameObject.tag == "BlueTeam")
+        {
+            tagPlayer = "RedPlayer";
+            tagMinion = "RedTeam";
+        }
+        else
+        {
+            tagPlayer = "BluePlayer";
+            tagMinion = "BlueTeam";
+        }
+
+        GameObject[] players = GameObject.FindGameObjectsWithTag(tagPlayer);
+        float distance = 1000; 
+        foreach(GameObject player in players)
+        {
+            float buf = Vector3.Distance(player.transform.position,transform.position);
+            if(buf < distance)
+            {
+                distance = buf;
+                if(distance <= fireRange)
+                {
+                    seekerTarget = player;
+                    target = true;
+                }
+            }
+        }
+        if (!target)
+        {
+            GameObject[] minions = GameObject.FindGameObjectsWithTag(tagMinion);
+            foreach (GameObject minion in minions)
+            {
+                float buf = Vector3.Distance(minion.transform.position, transform.position);
+                if (buf < distance)
+                {
+                    distance = buf;
+                    if (distance <= fireRange)
+                    {
+                        seekerTarget = minion;
+                        target = true;
+                    }
+                }
+            }
+        }
+        if(!target)
+        {
+            seekerTarget = priorTarget;
+        }
     }
 
     /// <summary>
