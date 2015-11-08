@@ -181,7 +181,7 @@ public class Minion : MonoBehaviour
         bool res = false;
         Vector3 vecToC = target.transform.position - transform.position;
         //get the distance between the two gameobject, take account of the hitbox
-        float distance = vecToC.magnitude - (radius * transform.lossyScale.magnitude) - (target.GetComponent<SphereCollider>().radius * transform.lossyScale.magnitude);
+        float distance = vecToC.magnitude;
         if (distance <= fireRange)
         {
             velocity = Vector3.zero;
@@ -216,6 +216,9 @@ public class Minion : MonoBehaviour
         return desired;
     }
 
+    /// <summary>
+    /// Attribuate the target for this frame
+    /// </summary>
     private void findTarget()
     {
         target = false;

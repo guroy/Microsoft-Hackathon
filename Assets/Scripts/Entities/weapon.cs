@@ -22,7 +22,17 @@ public class weapon : MonoBehaviour {
 			GameObject projectileA = Instantiate (projectile, spawnpoint.position, spawnpoint.rotation) as GameObject;
 			projectileA.GetComponent<bullet>().damage = dmgValue;
 			projectileA.GetComponent<bullet>().creator = this.transform;
-			projectileA.tag = this.transform.parent.gameObject.tag;
+            string tag;
+            if (this.transform.parent.gameObject.tag == "RedTeam" || this.transform.parent.gameObject.tag == "RedPlayer")
+            {
+                tag = "RedLaser";
+            }
+            else
+            {
+                tag = "BlueLaser";
+            }
+            projectileA.tag = tag;
+			projectileA.tag = tag;
 			projectileA.GetComponent<bullet>().range =range;
 			projectileA.GetComponent<Rigidbody> ().velocity = spawnpoint.TransformDirection (new Vector3 (0, 25, 0));
 		}		 
