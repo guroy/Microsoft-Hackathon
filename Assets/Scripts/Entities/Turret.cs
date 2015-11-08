@@ -19,7 +19,12 @@ public class Turret : MonoBehaviour
         findTarget();
         if(targetLock)
         {
-            GetComponentInChildren<weaponMinion>().fire = true;
+			foreach (Transform go in transform)
+			{
+			if(go != transform)
+            go.gameObject.GetComponent<weaponMinion>().fire = true;
+			}
+			rotateTo();
         }
         
     }
@@ -80,9 +85,11 @@ public class Turret : MonoBehaviour
     /// <summary>
     /// Functionn that allow the head of the turret to follow the target
     /// </summary>
-    //private void aim()
-    //{
-
-    //}
+	void rotateTo()
+	{
+		Vector3 direction = target.transform.position - transform.position;
+		Quaternion toRotation = Quaternion.LookRotation(direction);
+		transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 1.8f * Time.deltaTime);
+	}
 }
 

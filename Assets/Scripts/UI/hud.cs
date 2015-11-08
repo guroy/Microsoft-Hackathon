@@ -4,18 +4,19 @@ using UnityEngine.UI;
 
 public class hud : MonoBehaviour {
 
-	public GameObject playerShip;
-	public Text hull;
+	public playerShip playerShip;
+	public Image hull;
 	public Text money;
+	private int inititalHull;
 	// Use this for initialization
 	void Start () {
-
+		inititalHull = playerShip.hull;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		money.text = playerShip.GetComponent<playerShip>().money.ToString();
-		hull.text = "Hull: " + playerShip.GetComponent<playerShip>().hull.ToString();
-	
+		money.text = playerShip.money.ToString();
+		float percent = (float)playerShip.hull / inititalHull;
+		hull.fillAmount = percent;
 	}
 }
