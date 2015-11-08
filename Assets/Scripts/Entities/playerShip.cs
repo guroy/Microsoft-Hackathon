@@ -42,7 +42,7 @@ public class playerShip : MonoBehaviour {
 	{
 		foreach (Transform tr in transform) 
 		{
-			if (tr != transform)
+			if (tr != transform && tr.gameObject.name == "body")
 			{
 				Destroy (tr.gameObject);
 			}
