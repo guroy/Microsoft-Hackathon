@@ -68,14 +68,14 @@ public class MinionManager : MonoBehaviour
         {
             min.GetComponent<Minion>().separate(MinionsWave3);
         }
-
+        updateTarget();
         destroyShip();
     }
 
     private void destroyShip()
     {
         //destroy ship from wave1
-        for(int i = MinionsWave1.Count-1; i >= 0; i--)
+        for (int i = MinionsWave1.Count - 1; i >= 0; i--)
         {
             if (MinionsWave1[i].GetComponent<playerShip>().dead)
             {
@@ -87,7 +87,7 @@ public class MinionManager : MonoBehaviour
             }
         }
         //destroy ship from wave2
-        for (int i = MinionsWave2.Count-1; i >= 0; i--)
+        for (int i = MinionsWave2.Count - 1; i >= 0; i--)
         {
             if (MinionsWave2[i].GetComponent<playerShip>().dead)
             {
@@ -99,7 +99,7 @@ public class MinionManager : MonoBehaviour
             }
         }
         //destroy ship from wave3
-        for (int i = MinionsWave3.Count-1; i >= 0; i--)
+        for (int i = MinionsWave3.Count - 1; i >= 0; i--)
         {
             if (MinionsWave3[i].GetComponent<playerShip>().dead)
             {
@@ -118,11 +118,11 @@ public class MinionManager : MonoBehaviour
         GameObject target1;
         GameObject target2;
         GameObject target3;
-        if (destroyer1)
+        if (Destroyer1 != null)
         {
             target1 = Destroyer1;
         }
-        else if (destroyer2 && destroyer3)
+        else if (Destroyer2 != null && Destroyer3 != null)
         {
             // Random attribution on target 2 or 3, if superior to 50 go on 2 otherwise go on 3
             if (Random.Range(0, 100) > 50)
@@ -134,15 +134,15 @@ public class MinionManager : MonoBehaviour
                 target1 = Destroyer3;
             }
         }
-        else if (destroyer2)
+        else if (Destroyer2 != null)
         {
             target1 = Destroyer2;
         }
-        else if (destroyer3)
+        else if (Destroyer3 != null)
         {
             target1 = Destroyer3;
         }
-        else if (MotherShip)
+        else if (MotherShip != null)
         {
             target1 = MotherShip;
         }
@@ -151,11 +151,11 @@ public class MinionManager : MonoBehaviour
             target1 = Spawn;
         }
         // minion wave 2
-        if (destroyer2)
+        if (Destroyer2 != null)
         {
             target2 = Destroyer2;
         }
-        else if (destroyer1 && destroyer3)
+        else if (Destroyer1 != null && Destroyer3 != null)
         {
             // Random attribution on target 2 or 3, if superior to 50 go on 2 otherwise go on 3
             if (Random.Range(0, 100) > 50)
@@ -167,15 +167,15 @@ public class MinionManager : MonoBehaviour
                 target2 = Destroyer3;
             }
         }
-        else if (destroyer1)
+        else if (Destroyer1 != null)
         {
             target2 = Destroyer1;
         }
-        else if (destroyer3)
+        else if (Destroyer3 != null)
         {
             target2 = Destroyer3;
         }
-        else if (MotherShip)
+        else if (MotherShip != null)
         {
             target2 = MotherShip;
         }
@@ -184,11 +184,11 @@ public class MinionManager : MonoBehaviour
             target2 = Spawn;
         }
         // minion Wave 3
-        if (destroyer3)
+        if (Destroyer3 != null)
         {
             target3 = Destroyer3;
         }
-        else if (destroyer2 && destroyer1)
+        else if (Destroyer2 != null && Destroyer1 != null)
         {
             // Random attribution on target 2 or 3, if superior to 50 go on 2 otherwise go on 3
             if (Random.Range(0, 100) > 50)
@@ -200,15 +200,15 @@ public class MinionManager : MonoBehaviour
                 target3 = Destroyer1;
             }
         }
-        else if (destroyer2)
+        else if (Destroyer2 != null)
         {
             target3 = Destroyer2;
         }
-        else if (destroyer1)
+        else if (Destroyer1 != null)
         {
             target3 = Destroyer1;
         }
-        else if (MotherShip)
+        else if (MotherShip != null)
         {
             target3 = MotherShip;
         }
@@ -239,6 +239,129 @@ public class MinionManager : MonoBehaviour
             go.GetComponent<Minion>().seekerTarget = target1;
             go.tag = Spawn.gameObject.tag;
             MinionsWave1.Add(go);
+        }
+
+    }
+
+    private void updateTarget()
+    {
+        //SpawnMinions for wave 1
+        GameObject target1;
+        GameObject target2;
+        GameObject target3;
+        if (Destroyer1 != null)
+        {
+            target1 = Destroyer1;
+        }
+        else if (Destroyer2 != null && Destroyer3 != null)
+        {
+            // Random attribution on target 2 or 3, if superior to 50 go on 2 otherwise go on 3
+            if (Random.Range(0, 100) > 50)
+            {
+                target1 = Destroyer2;
+            }
+            else
+            {
+                target1 = Destroyer3;
+            }
+        }
+        else if (Destroyer2 != null)
+        {
+            target1 = Destroyer2;
+        }
+        else if (Destroyer3 != null)
+        {
+            target1 = Destroyer3;
+        }
+        else if (MotherShip != null)
+        {
+            target1 = MotherShip;
+        }
+        else
+        {
+            target1 = Spawn;
+        }
+        // minion wave 2
+        if (Destroyer2 != null)
+        {
+            target2 = Destroyer2;
+        }
+        else if (Destroyer1 != null && Destroyer3 != null)
+        {
+            // Random attribution on target 2 or 3, if superior to 50 go on 2 otherwise go on 3
+            if (Random.Range(0, 100) > 50)
+            {
+                target2 = Destroyer1;
+            }
+            else
+            {
+                target2 = Destroyer3;
+            }
+        }
+        else if (Destroyer1 != null)
+        {
+            target2 = Destroyer1;
+        }
+        else if (Destroyer3 != null)
+        {
+            target2 = Destroyer3;
+        }
+        else if (MotherShip != null)
+        {
+            target2 = MotherShip;
+        }
+        else
+        {
+            target2 = Spawn;
+        }
+        // minion Wave 3
+        if (Destroyer3 != null)
+        {
+            target3 = Destroyer3;
+        }
+        else if (Destroyer2 != null && Destroyer1 != null)
+        {
+            // Random attribution on target 2 or 3, if superior to 50 go on 2 otherwise go on 3
+            if (Random.Range(0, 100) > 50)
+            {
+                target3 = Destroyer2;
+            }
+            else
+            {
+                target3 = Destroyer1;
+            }
+        }
+        else if (Destroyer2 != null)
+        {
+            target3 = Destroyer2;
+        }
+        else if (Destroyer1 != null)
+        {
+            target3 = Destroyer1;
+        }
+        else if (MotherShip != null)
+        {
+            target3 = MotherShip;
+        }
+        else
+        {
+            target3 = Spawn;
+        }
+
+        //destroy ship from wave1
+        for (int i = MinionsWave1.Count - 1; i >= 0; i--)
+        {
+            MinionsWave1[i].GetComponent<Minion>().priorTarget = target1;
+        }
+        //destroy ship from wave2
+        for (int i = MinionsWave2.Count - 1; i >= 0; i--)
+        {
+            MinionsWave2[i].GetComponent<Minion>().priorTarget = target2;
+        }
+        //destroy ship from wave3
+        for (int i = MinionsWave3.Count - 1; i >= 0; i--)
+        {
+            MinionsWave3[i].GetComponent<Minion>().priorTarget = target3;
         }
 
     }
