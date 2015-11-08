@@ -50,21 +50,23 @@ public class bullet : MonoBehaviour
             string player;
             string minion;
             string laser;
+            string turret;
             if(gameObject.tag == "RedLaser")
             {
                 player = "BlueLaser";
                 minion = "BlueTeam";
                 laser = "BlueLaser";
-
+                turret = "BlueTurret"; 
             }
             else
             {
                 player = "RedLaser";
                 minion = "RedTeam";
                 laser = "RedLaser";
+                turret = "RedTurret";
             }
 
-            if ((collision.gameObject.tag == player || collision.gameObject.tag == minion) && collision.gameObject.tag != laser)
+            if ((collision.gameObject.tag == player || collision.gameObject.tag == minion || collision.gameObject.tag == turret) && collision.gameObject.tag != laser)
 			{
 				collision.gameObject.GetComponent<playerShip>().hull -= damage;
 				collision.gameObject.GetComponent<playerShip>().lastHit = creator.parent.gameObject;

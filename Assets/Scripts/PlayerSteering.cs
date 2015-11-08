@@ -157,7 +157,6 @@ public class PlayerSteering : MonoBehaviour
     /// method that calculate the forces to avoid the obstacles
     /// </summary>
     /// <returns> the vector that give the way tpo avoid the obstacles </returns>
-    /// 
     private Vector3 avoidObstacle()
     {
         Vector3 steer = Vector3.zero;
