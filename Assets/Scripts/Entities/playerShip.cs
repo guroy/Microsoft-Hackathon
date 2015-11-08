@@ -10,6 +10,9 @@ public class playerShip : MonoBehaviour {
 	public GameObject[] bays;
 	public Transform explosion;
 	public GameObject lastHit;
+	public Vector3 itemPosition1;
+	public Vector3 itemPosition2;
+	public Vector3 itemPosition3;
 	// Use this for initialization
 	void Start () 
     {
@@ -50,6 +53,11 @@ public class playerShip : MonoBehaviour {
 			{
 			GameObject temp = Instantiate(go);
 			temp.transform.parent = this.transform;
+			temp.transform.position = itemPosition1;
+				itemPosition1 = itemPosition2;
+				itemPosition2 = itemPosition3;
+				itemPosition3 = temp.transform.position;
+				temp.GetComponent<weapon>().enabled = true;
 			}
 		}
 	}
