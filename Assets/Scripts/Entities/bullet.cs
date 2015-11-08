@@ -53,14 +53,14 @@ public class bullet : MonoBehaviour
             string turret;
             if(gameObject.tag == "RedLaser")
             {
-                player = "BlueLaser";
+                player = "BluePlayer";
                 minion = "BlueTeam";
                 laser = "BlueLaser";
                 turret = "BlueTurret"; 
             }
             else
             {
-                player = "RedLaser";
+                player = "RedPlayer";
                 minion = "RedTeam";
                 laser = "RedLaser";
                 turret = "RedTurret";

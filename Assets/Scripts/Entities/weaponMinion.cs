@@ -13,7 +13,7 @@ public class weaponMinion : MonoBehaviour {
 
     public bool fire;
     private float timer;
-    public float wait = 5; 
+    private float wait = 2; 
 
 	// Use this for initialization
 	void Start () 
