@@ -36,7 +36,7 @@ public class bullet : MonoBehaviour {
 			Vector3 pos = contact.point;
 			Instantiate (explosion, pos, rot);
 
-			if(collision.gameObject.tag != this.tag)
+			if(collision.gameObject.tag == "bluePlayer" && gameObject.tag == "redPlayer")
 			{
 				collision.gameObject.GetComponent<playerShip>().hull -= damage;
 				collision.gameObject.GetComponent<playerShip>().lastHit = creator.parent.gameObject;
