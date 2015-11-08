@@ -19,7 +19,7 @@ public class PlayerSteering : MonoBehaviour
 
     //Forces
     public float weightSteer;
-    public float weightAvoid;
+    //public float weightAvoid;
     public float maxSpeed;
     public float maxForce;
     public float safeDist;
@@ -87,22 +87,22 @@ public class PlayerSteering : MonoBehaviour
         Vector3 desSteerForce = seek(seekerTarget.transform.position);
         desired += desSteerForce;
         //Calculate the force to avoid obstacles
-        Vector3 avoidance = avoidObstacle();
+       // Vector3 avoidance = avoidObstacle();
         //calculate the separation force
         //Vector3 separation = separate();
 
         //weight the different forces to Apply to the acceleration
         desired *= weightSteer;
-        avoidance *= weightAvoid;
+        //avoidance *= weightAvoid;
         //separation *= weightAvoid;
 
         //limit the force to apply
         desired = Vector3.ClampMagnitude(desired, maxForce);
-        avoidance = Vector3.ClampMagnitude(avoidance, maxForce);
+       // avoidance = Vector3.ClampMagnitude(avoidance, maxForce);
         //separation = Vector3.ClampMagnitude(separation, maxForce);
 
         ApplyForce(desired);
-        ApplyForce(avoidance);
+      //  ApplyForce(avoidance);
         //ApplyForce(separation);
     }
 
