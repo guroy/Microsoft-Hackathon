@@ -18,10 +18,10 @@ public class MinionManager : MonoBehaviour
     public GameObject Spawn;
     public GameObject minionPrefab;
 
-    protected bool destroyer1;
-    protected bool destroyer2;
-    protected bool destroyer3;
-    protected bool mothership;
+    public bool destroyer1;
+    public bool destroyer2;
+    public bool destroyer3;
+    public bool mothership;
 
     //Timer for spawning Minion
     private float lastSpawn;
