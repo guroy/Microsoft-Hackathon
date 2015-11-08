@@ -68,9 +68,51 @@ public class MinionManager : MonoBehaviour
         {
             min.GetComponent<Minion>().separate(MinionsWave3);
         }
+
+        destroyShip();
     }
 
-    void spawnMinions()
+    private void destroyShip()
+    {
+        //destroy ship from wave1
+        for(int i = MinionsWave1.Count-1; i >= 0; i--)
+        {
+            if (MinionsWave1[i].GetComponent<playerShip>().dead)
+            {
+                Instantiate(MinionsWave1[i].GetComponent<playerShip>().explosion, MinionsWave1[i].GetComponent<playerShip>().transform.position, MinionsWave1[i].GetComponent<playerShip>().transform.rotation);
+                MinionsWave1[i].GetComponent<playerShip>().lastHit.GetComponent<playerShip>().money += MinionsWave1[i].GetComponent<playerShip>().value;
+                GameObject buf = MinionsWave1[i] as GameObject;
+                MinionsWave1.RemoveAt(i);
+                Destroy(buf);
+            }
+        }
+        //destroy ship from wave2
+        for (int i = MinionsWave2.Count-1; i >= 0; i--)
+        {
+            if (MinionsWave2[i].GetComponent<playerShip>().dead)
+            {
+                Instantiate(MinionsWave2[i].GetComponent<playerShip>().explosion, MinionsWave2[i].GetComponent<playerShip>().transform.position, MinionsWave2[i].GetComponent<playerShip>().transform.rotation);
+                MinionsWave2[i].GetComponent<playerShip>().lastHit.GetComponent<playerShip>().money += MinionsWave2[i].GetComponent<playerShip>().value;
+                GameObject buf = MinionsWave2[i] as GameObject;
+                MinionsWave2.RemoveAt(i);
+                Destroy(buf);
+            }
+        }
+        //destroy ship from wave3
+        for (int i = MinionsWave3.Count-1; i >= 0; i--)
+        {
+            if (MinionsWave3[i].GetComponent<playerShip>().dead)
+            {
+                Instantiate(MinionsWave3[i].GetComponent<playerShip>().explosion, MinionsWave3[i].GetComponent<playerShip>().transform.position, MinionsWave3[i].GetComponent<playerShip>().transform.rotation);
+                MinionsWave3[i].GetComponent<playerShip>().lastHit.GetComponent<playerShip>().money += MinionsWave3[i].GetComponent<playerShip>().value;
+                GameObject buf = MinionsWave3[i] as GameObject;
+                MinionsWave3.RemoveAt(i);
+                Destroy(buf);
+            }
+        }
+    }
+
+    private void spawnMinions()
     {
         //SpawnMinions for wave 1
         GameObject target1;
@@ -175,20 +217,29 @@ public class MinionManager : MonoBehaviour
             target3 = Spawn;
         }
 
-        GameObject go;
+        GameObject go = null;
+
         for (int i = 0; i < 5; i++)
         {
+            //Wave3
             go = (GameObject)Instantiate(minionPrefab, Spawn.transform.position - Spawn.transform.right * i * 2, Quaternion.identity);
+            go.GetComponent<Minion>().priorTarget = target3;
             go.GetComponent<Minion>().seekerTarget = target3;
+            go.tag = Spawn.gameObject.tag;
             MinionsWave3.Add(go);
+            //Wave2
             go = (GameObject)Instantiate(minionPrefab, Spawn.transform.position + Spawn.transform.forward * i * 2, Quaternion.identity);
+            go.GetComponent<Minion>().priorTarget = target2;
             go.GetComponent<Minion>().seekerTarget = target2;
+            go.tag = Spawn.gameObject.tag;
             MinionsWave2.Add(go);
+            //Wave1
             go = (GameObject)Instantiate(minionPrefab, Spawn.transform.position + Spawn.transform.right * i * 2, Quaternion.identity);
+            go.GetComponent<Minion>().priorTarget = target1;
             go.GetComponent<Minion>().seekerTarget = target1;
+            go.tag = Spawn.gameObject.tag;
             MinionsWave1.Add(go);
         }
-
 
     }
 }
